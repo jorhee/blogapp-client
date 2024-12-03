@@ -1,0 +1,14 @@
+.active-link {
+  font-weight: bold;
+  color: #ff9800; /* Example: Highlight with an orange color */
+}
+.inactive-link {
+  color: white; /* Inactive link color */
+  text-decoration: none;
+  font-weight: normal;
+}
+
+.navbar {
+  background-color: #1976d2; /* Adjust based on your theme */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,23 @@
+.logout-button {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #ff6c63; /* Red background for logout */
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.logout-button:hover {
+  background-color: #c85353; /* Darker red on hover */
+}
+
+.logout-icon {
+  margin-right: 8px; /* Space between icon and text */
+  font-size: 20px;
+}

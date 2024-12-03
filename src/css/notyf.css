@@ -1,0 +1,32 @@
+/* Custom styling for Notyf */
+.notyf {
+  font-size: 18px; /* Bigger font size */
+  padding: 20px 30px; /* Larger padding */
+}
+
+.notyf__toast {
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.notyf__toast--success {
+  background-color: #28a745; /* Green for success */
+  color: #ffffff;
+  text-align: center;
+  font-weight: bold;
+}
+
+.notyf__toast--error {
+  background-color: #dc3545; /* Red for errors */
+  color: #ffffff;
+  text-align: center;
+  font-weight: bold;
+}
+
+.notyf-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
