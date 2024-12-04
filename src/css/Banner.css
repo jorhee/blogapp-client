@@ -1,0 +1,21 @@
+.banner {
+  background-color: #f9f9f9;
+  padding: 50px 20px;
+  color: #333;
+}
+
+.banner h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.banner ul {
+  list-style-type: square;
+  padding-left: 20px;
+}
+
+.banner li {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}

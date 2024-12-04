@@ -1,15 +1,32 @@
 .hero {
-  background: url('https://source.unsplash.com/1600x900/?nature,blog') no-repeat center center/cover;
-  height: 60vh;
+  background-size: cover;
+  background-position: center;
+  height: 48vh; /* Full viewport height */
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: white;
-  text-align: center;
+  justify-content: center;
+  position: relative;
 }
 
 .hero-content {
-  background: rgba(0, 0, 0, 0.5);
-  padding: 20px;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent glassy background */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+  backdrop-filter: blur(10px); /* Glassy blur effect */
+  -webkit-backdrop-filter: blur(10px); /* For Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Optional border for better contrast */
+  border-radius: 15px;
+  padding: 20px 20px;
+  text-align: center;
+  color: white;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  line-height: 1.6;
 }

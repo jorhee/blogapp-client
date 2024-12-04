@@ -1,6 +1,7 @@
+/* Active and Inactive Links */
 .active-link {
   font-weight: bold;
-  color: #ff9800; /* Example: Highlight with an orange color */
+  color: #ff9800; /* Highlight with an orange color */
 }
 .inactive-link {
   color: white; /* Inactive link color */
@@ -8,7 +9,27 @@
   font-weight: normal;
 }
 
+/* Hover Effect for Links */
+.nav-link:hover {
+  color: #ff9800 !important; /* Orange hover effect */
+  text-decoration: none; /* Remove underline on hover */
+  transition: color 0.3s ease-in-out;
+}
+
+/* Navbar Styling */
 .navbar {
-  background-color: #1976d2; /* Adjust based on your theme */
+  background-color: #1976d2;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-family: "Fantasy", sans-serif;
+  font-size: 1.5rem;
+  color: #ff6f61 !important;
+}
+
+.nav-link {
+  font-size: 1rem;
+  color: white !important;
+  transition: color 0.3s ease-in-out;
 }

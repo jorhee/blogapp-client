@@ -1,0 +1,75 @@
+/* Blog Section Styling */
+.blog-section {
+  padding: 50px 20px;
+}
+
+.blog-section h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #ff9800; /* Bright orange color for the title */
+  margin-bottom: 30px;
+}
+
+/* Blog Card Styling */
+.anime-blog-card {
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.anime-blog-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 50px;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  padding: 50px;
+}
+
+/* Responsive Design: Ensure that the section is well aligned on mobile devices */
+@media (max-width: 768px) {
+  .blog-section {
+    padding: 20px;
+  }
+
+  .blog-card {
+    margin-bottom: 20px; /* Reduce spacing between blog cards on smaller screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .blog-section h2 {
+    font-size: 2rem; /* Smaller title font size on very small screens */
+  }
+}
+
+/* Title and content within Blog Card */
+.blog-card h3 {
+  color: #333333; /* Dark text for title */
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.blog-card p {
+  color: #666666; /* Lighter text color for content */
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Styling for Blog Card Image */
+.blog-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 20px;
+}

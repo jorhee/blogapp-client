@@ -1,12 +1,14 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AppNavbar from './components/AppNavbar';
 import Footer from './components/Footer';
-import Blogs from './components/Blogs';
+import BlogSection from './components/BlogSection';
+import BlogDetail from './components/BlogDetail';
 
 import ErrorPage from './pages/ErrorPage';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import LogoutButton from './pages/LogoutButton';
+import AddBlogPage from './pages/AddBlogPage';
 
 
 
@@ -26,7 +28,9 @@ function App() {
           <Routes>
             <Route path="*" element={<ErrorPage />} />
             <Route path="/" element={<Home />} />
-            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/addBlog" element={<AddBlogPage />} />
+            <Route path="/blogs" element={<BlogSection />} />
+            <Route path="/blogs/getBlog/:blogId" element={<BlogDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<LogoutButton />} />
             <Route path="/profile" element={<Profile />} />
