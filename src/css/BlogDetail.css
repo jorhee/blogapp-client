@@ -36,11 +36,40 @@
 }
 
 /* Author information styling */
+.author-details {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.author-profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;  /* Circle shape */
+  margin-right: 15px;  /* Space between profile picture and text */
+}
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+}
+
 .author-name {
   font-size: 1.1rem;
-  color: #1976d2;
-  margin-bottom: 30px;
   font-weight: bold;
+  color: #1976d2;
+  margin-bottom: 5px;
+}
+
+.creation-date {
+  font-size: 0.8rem;
+  color: #6c757d; /* Grayish color */
+  margin-top: 0; /* Remove top margin */
+  cursor: pointer;
+}
+
+.creation-date:hover {
+  text-decoration: underline;
 }
 
 /* Image styling */
@@ -122,4 +151,55 @@
   .blog-image {
     max-height: 300px; /* Adjust image size for smaller screens */
   }
+}
+
+/* src/css/BlogDetail.css */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px;
+  max-width: 90%;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content label {
+  margin-top: 10px;
+}
+
+.modal-content input,
+.modal-content textarea {
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.modal-content button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-content button[type="button"] {
+  background-color: #f44336;
 }

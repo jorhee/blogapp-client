@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react"; 
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"; // Import useParams
 import "../css/BlogDetail.css"; // Import the CSS file
+import placeholderProfilePicture from "../components/images/placeholder-profilePicture.png"; // Import placeholder image
 
 const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
@@ -31,6 +32,21 @@ const BlogDetail = () => {
     }
   }, [blogId]);
 
+  // Function to calculate time passed
+  const timePassed = (date) => {
+    const now = new Date();
+    const postedDate = new Date(date);
+    const diffMs = now - postedDate;
+    const diffMins = Math.floor(diffMs / 60000);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours}h`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays}d`;
+  };
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
@@ -43,8 +59,31 @@ const BlogDetail = () => {
     <div className="blog-detail-container">
       {blog ? (
         <div className="blog-detail-card">
+          {/* Author Details Section */}
+          <div className="author-details">
+            {/* Author profile picture or placeholder */}
+            <img 
+              src={blog.author.profilePicture ? 
+                `${process.env.REACT_APP_API_BASE_URL}/uploads/${blog.author.profilePicture}` :
+                placeholderProfilePicture} 
+              alt={blog.author.userName} 
+              className="author-profile-pic" 
+            />
+            
+            {/* Author's username and creation date */}
+            <div className="author-info">
+              <span className="author-name">{blog.author.userName}</span>
+              <span 
+                className="creation-date" 
+                title={`Posted on: ${new Date(blog.creationDate).toLocaleString()}`}
+              >
+                {timePassed(blog.creationDate)}
+              </span>
+            </div>
+          </div>
+
           <h1 className="blog-title">{blog.title}</h1>
-          
+
           {/* Display the blog image if available */}
           {blog.picture ? (
             <img 
@@ -57,7 +96,6 @@ const BlogDetail = () => {
           )}
 
           <p className="blog-content">{blog.content}</p>
-          <h4 className="author-name">Author: {blog.author.userName}</h4>
 
           {/* Comments Section */}
           <div className="comments-section">
