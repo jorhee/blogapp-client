@@ -1,101 +1,70 @@
-import React, { useState } from "react";
-import { Button, Form, Spinner, Alert } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Button, Form, Spinner, Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { Notyf } from 'notyf'; // Import notyf
 import 'notyf/notyf.min.css'; // Import notyf styles
 import "../css/AddBlogPage.css"; // Add custom CSS for styling
 
-const notyf = new Notyf(); // Initialize Notyf
-
-const AddBlogPage = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+export default function AddBlogPage() {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [picture, setPicture] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [isActive, setIsActive] = useState(false); // Track form validity
+
   const navigate = useNavigate();
+  const notyf = new Notyf();
+
+  // Enable the submit button only when required fields are filled
+  useEffect(() => {
+    setIsActive(!!title.trim() && !!content.trim());
+  }, [title, content]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setPicture(file);
-    }
+    setPicture(file || null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    setSuccess(false);
+    setError('');
 
-    // Check if title and content are not empty before submission
-    if (!title.trim() || !content.trim()) {
-      setError("Title and content cannot be empty.");
-      setLoading(false);
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-    if (picture) {
-      formData.append("picture", picture);
-    }
-
-    // Log the form data to the console to debug
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
+    const payload = {
+      title: title.trim(),
+      content: content.trim(),
+      picture: picture || null, // Handle file upload separately if required
+    };
 
     try {
-      const token = localStorage.getItem("token"); // Retrieve token from localStorage
-
-      if (!token) {
-        throw new Error("Authentication token not found.");
-      }
-
-      // Log the token to ensure it's retrieved correctly
-      console.log("Token:", token);
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('Authentication token not found.');
 
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/blogs/addBlog`, {
-        method: "POST",
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: formData,
+        body: JSON.stringify(payload),
       });
 
-      // Log the response for debugging
-      const responseBody = await response.json();
-      console.log("Response status:", response.status);
-      console.log("Response body:", responseBody);
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || `Failed with status ${response.status}`);
 
-      if (!response.ok) {
-        throw new Error(`Failed to add the blog. Server responded with ${response.status}`);
-      }
-
-      const result = responseBody; // Since the response is already parsed
-      setSuccess(true);
-      setTitle("");
-      setContent("");
+      notyf.success('Blog created successfully!');
+      setTitle('');
+      setContent('');
       setPicture(null);
       setLoading(false);
 
-      // Show success notification with notyf
-      notyf.success("Blog created successfully!");
-
-      setTimeout(() => {
-        navigate(`/blogs/getBlog/${result._id}`);
-      }, 2000);
+      setTimeout(() => navigate(`/blogs/getBlog/${result._id}`), 2000);
     } catch (err) {
-      // Log the error to identify the issue
-      console.error("Error during submission:", err);
-
-      setError("Failed to add the blog. Please try again.");
+      console.error('Error during submission:', err);
+      notyf.error('Error creating blog. Please try again.');
+      setError(err.message || 'An error occurred.');
       setLoading(false);
-      // Show error notification with notyf
-      notyf.error("Error creating blog. Please try again.");
     }
   };
 
@@ -137,12 +106,16 @@ const AddBlogPage = () => {
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit" disabled={loading}>
-          {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
-        </Button>
+        <div className="text-center mt-4">
+          <Button
+            variant={isActive ? 'primary' : 'danger'}
+            type="submit"
+            disabled={!isActive || loading}
+          >
+            {loading ? <Spinner animation="border" size="sm" /> : 'Submit'}
+          </Button>
+        </div>
       </Form>
     </div>
   );
-};
-
-export default AddBlogPage;
+}
