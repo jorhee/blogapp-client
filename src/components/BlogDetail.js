@@ -8,7 +8,7 @@ import { Notyf } from "notyf"; // Import Notyf
 // Create Notyf instance
 const notyf = new Notyf({
   duration: 3000,
-  position: { x: "right", y: "top" },
+  position: { x: "center", y: "center" },
 });
 
 const BlogDetail = () => {
@@ -182,7 +182,7 @@ const BlogDetail = () => {
             </div>
 
             {/* Three dots icon with options */}
-            {isAuthenticated && user && blog.author.userId === user._id && (
+            {isAuthenticated && user && user.isAdmin && (
               <div className="edit-options">
                 <button
                   className="three-dots"
@@ -257,6 +257,19 @@ const BlogDetail = () => {
                 <div key={comment._id} className="comment-card">
                   <strong>{comment.userName}</strong>
                   <p>{comment.text}</p>
+                  
+                  {/* Display replies */}
+                  {comment.replies && comment.replies.length > 0 && (
+                    <div className="replies">
+                      <h5>Replies:</h5>
+                      {comment.replies.map((reply) => (
+                        <div key={reply._id} className="reply-card">
+                          <strong>{reply.userName}</strong>
+                          <p>{reply.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))
             ) : (
@@ -289,3 +302,4 @@ const BlogDetail = () => {
 };
 
 export default BlogDetail;
+

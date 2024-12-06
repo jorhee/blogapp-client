@@ -123,6 +123,30 @@
   color: #555;
 }
 
+/* Replies Section */
+.replies {
+  margin-top: 15px;
+  padding-left: 20px;
+  border-left: 2px solid #ccc;
+}
+
+.reply-card {
+  background-color: #f1f1f1;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.reply-card strong {
+  font-size: 14px;
+}
+
+.reply-card p {
+  font-size: 13px;
+  color: #555;
+}
+
 /* Loading and Error messages */
 .loading, .error {
   font-size: 1.5rem;
@@ -153,8 +177,7 @@
   }
 }
 
-/* src/css/BlogDetail.css */
-
+/* Modal overlay and content */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -290,7 +313,6 @@
 .edit-dropdown button:hover {
   background-color: #e0e0e0;
 }
-
 
 /* Style for the confirmation modal */
 .confirmation-modal {
