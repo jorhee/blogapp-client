@@ -21,6 +21,8 @@ const BlogDetail = () => {
   const [newPicture, setNewPicture] = useState(null);
   const [showOptions, setShowOptions] = useState(false); // For handling the three dots dropdown
   const [showConfirmationModal, setShowConfirmationModal] = useState(false); // For delete confirmation modal
+  const [newComment, setNewComment] = useState(""); // For handling new comment text
+  const [refetchFlag, setRefetchFlag] = useState(false); // Flag to trigger blog re-fetch
 
   const { user, isAuthenticated } = useContext(AuthContext); // Access auth state and user
   const navigate = useNavigate(); // For navigation after deletion
@@ -50,7 +52,7 @@ const BlogDetail = () => {
     if (blogId) {
       fetchBlogDetail();
     }
-  }, [blogId]);
+  }, [blogId, refetchFlag]); // Refetch when refetchFlag changes
 
   const handleSave = async () => {
     try {
@@ -136,6 +138,46 @@ const BlogDetail = () => {
       setShowConfirmationModal(false);
     }
   };
+
+  const handleAddComment = async () => {
+  if (!newComment.trim()) {
+    notyf.error("Comment cannot be empty.");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("token");
+
+    // Make the POST request to the backend with blogId and comment text
+    const response = await fetch(
+      `${process.env.REACT_APP_API_BASE_URL}/blogs/addComment/${blogId}`, // Correct URL with blogId
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Include the token for authentication
+        },
+        body: JSON.stringify({ text: newComment }), // Send the comment text
+      }
+    );
+
+    const data = await response.json();
+    console.log("Response from backend:", data); // Log the response from the backend
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to add comment");
+    }
+
+    // Assuming the backend sends the updated blog object, including the new comment
+    setBlog(data.updatedBlog); // Update the blog state with the updated blog (including the new comment)
+    setNewComment(""); // Clear the comment input field
+    setRefetchFlag((prev) => !prev); // Toggle refetch flag to trigger re-fetch
+    notyf.success("Comment added successfully!");
+  } catch (err) {
+    console.error("Error in handleAddComment:", err); // Log the error
+    notyf.error(err.message || "An error occurred while adding the comment.");
+  }
+};
 
   const timePassed = (date) => {
     const now = new Date();
@@ -257,13 +299,13 @@ const BlogDetail = () => {
                 <div key={comment._id} className="comment-card">
                   <strong>{comment.userName}</strong>
                   <p>{comment.text}</p>
-                  
+
                   {/* Display replies */}
                   {comment.replies && comment.replies.length > 0 && (
                     <div className="replies">
                       <h5>Replies:</h5>
-                      {comment.replies.map((reply) => (
-                        <div key={reply._id} className="reply-card">
+                      {comment.replies.map((reply, index) => (
+                        <div key={`${comment._id}-reply-${index}`} className="reply-card">
                           <strong>{reply.userName}</strong>
                           <p>{reply.text}</p>
                         </div>
@@ -274,6 +316,16 @@ const BlogDetail = () => {
               ))
             ) : (
               <p>No comments yet</p>
+            )}
+            {isAuthenticated && (
+              <div className="add-comment">
+                <textarea
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="Add a comment..."
+                />
+                <button onClick={handleAddComment}>Post Comment</button>
+              </div>
             )}
           </div>
         </div>
@@ -302,4 +354,3 @@ const BlogDetail = () => {
 };
 
 export default BlogDetail;
-
