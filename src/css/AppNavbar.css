@@ -16,6 +16,38 @@
   transition: color 0.3s ease-in-out;
 }
 
+/* Tooltip Styles for Nav Links */
+.nav-link {
+  position: relative; /* Enable positioning for tooltip */
+  font-size: 1rem;
+  color: white !important;
+  transition: color 0.3s ease-in-out;
+}
+
+/* Tooltip Styling */
+.nav-link::after {
+  content: attr(data-tooltip); /* Tooltip text from data attribute */
+  position: absolute;
+  bottom: -30px; /* Position the tooltip below the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8); /* Dark background for tooltip */
+  color: #fff; /* Tooltip text color */
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  white-space: nowrap; /* Prevent text wrapping */
+  opacity: 0; /* Hidden by default */
+  pointer-events: none; /* Prevent interactions */
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1000; /* Ensure tooltip is above other elements */
+}
+
+/* Show Tooltip on Hover */
+.nav-link:hover::after {
+  opacity: 1; /* Make tooltip visible */
+}
+
 /* Navbar Styling */
 .navbar {
   background-color: #1976d2;
@@ -26,10 +58,4 @@
   font-family: "Fantasy", sans-serif;
   font-size: 1.5rem;
   color: #ff6f61 !important;
-}
-
-.nav-link {
-  font-size: 1rem;
-  color: white !important;
-  transition: color 0.3s ease-in-out;
 }

@@ -9,18 +9,16 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LoginIcon from "@mui/icons-material/Login";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
-import '../css/AppNavbar.css'
+import '../css/AppNavbar.css';
 
 const AppNavbar = () => {
+  const { user, loading } = useContext(AuthContext);
 
-  const { user, loading } = useContext(AuthContext);  // Extract loading state
+  if (loading) {
+    return <Navbar expand="lg" className="bg-warning bg-gradient text-black fw-semibold">Loading...</Navbar>;
+  }
 
-    // Display a loading indicator until user data is fetched
-    if (loading) {
-        return <Navbar expand="lg" className="bg-warning bg-gradient text-black fw-semibold">Loading...</Navbar>;
-    }
-
-return (
+  return (
     <Navbar bg="dark" variant="dark" expand="lg" className="navbar">
       <Container>
         <Navbar.Brand as={NavLink} to="/">
@@ -30,60 +28,37 @@ return (
         <Navbar.Collapse id="navbar-nav">
           <Nav className="ms-auto">
             {/* Home */}
-            <Nav.Link
-              as={NavLink}
-              to="/"
-              className="nav-link"
-            >
-              <HomeIcon className="me-2" /> Home
+            <Nav.Link as={NavLink} to="/" className="nav-link" data-tooltip="Home">
+              <HomeIcon className="me-2" />
             </Nav.Link>
             {/* Blogs */}
-            <Nav.Link
-              as={NavLink}
-              to="/blogs"
-              className="nav-link"
-            >
-              <MenuBookIcon className="me-2" /> Blogs
+            <Nav.Link as={NavLink} to="/blogs" className="nav-link" data-tooltip="Blogs">
+              <MenuBookIcon className="me-2" />
             </Nav.Link>
-            {/* Conditional Rendering for Logged-in User */}
             {user ? (
               <>
                 {/* Add Blog */}
-                <Nav.Link
-                  as={NavLink}
-                  to="/addBlog"
-                  className="nav-link"
-                >
-                  <AddCircleIcon className="me-2" /> Add Blog
+                <Nav.Link as={NavLink} to="/addBlog" className="nav-link" data-tooltip="Add Blog">
+                  <AddCircleIcon className="me-2" />
                 </Nav.Link>
                 {/* Profile */}
-                <Nav.Link
-                  as={NavLink}
-                  to="/profile"
-                  className="nav-link"
-                >
-                  <AccountCircleIcon className="me-2" /> Profile
+                <Nav.Link as={NavLink} to="/profile" className="nav-link" data-tooltip="Profile">
+                  <AccountCircleIcon className="me-2" />
                 </Nav.Link>
                 {/* Logout */}
-                <LogoutButton />
+                <Nav.Item className="nav-link" data-tooltip="Logout">
+                  <LogoutButton />
+                </Nav.Item>
               </>
             ) : (
               <>
                 {/* Login */}
-                <Nav.Link
-                  as={NavLink}
-                  to="/login"
-                  className="nav-link"
-                >
-                  <LoginIcon className="me-2" /> Login
+                <Nav.Link as={NavLink} to="/login" className="nav-link" data-tooltip="Login">
+                  <LoginIcon className="me-2" />
                 </Nav.Link>
                 {/* Register */}
-                <Nav.Link
-                  as={NavLink}
-                  to="/register"
-                  className="nav-link"
-                >
-                  <AppRegistrationIcon className="me-2" /> Register
+                <Nav.Link as={NavLink} to="/register" className="nav-link" data-tooltip="Register">
+                  <AppRegistrationIcon className="me-2" />
                 </Nav.Link>
               </>
             )}
@@ -92,6 +67,6 @@ return (
       </Container>
     </Navbar>
   );
-}
+};
 
 export default AppNavbar;

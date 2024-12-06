@@ -1,25 +1,44 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // Import useParams
-import "../css/BlogDetail.css"; // Import the CSS file
-import placeholderProfilePicture from "../components/images/placeholder-profilePicture.png"; // Import placeholder image
+import React, { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router-dom";
+import "../css/BlogDetail.css";
+import placeholderProfilePicture from "../components/images/placeholder-profilePicture.png";
+import { AuthContext } from "../context/AuthContext"; // Import AuthContext for authentication
+import { Notyf } from "notyf"; // Import Notyf
+
+// Create Notyf instance
+const notyf = new Notyf({
+  duration: 3000,
+  position: { x: 'center', y: 'center' },
+});
 
 const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState("");
+  const [editedTitle, setEditedTitle] = useState("");
+  const [newPicture, setNewPicture] = useState(null);
+  const [showOptions, setShowOptions] = useState(false); // For handling the three dots dropdown
 
-  // Access blogId from URL parameters using useParams hook
+  const { user, isAuthenticated } = useContext(AuthContext); // Access auth state and user
+
+
   const { blogId } = useParams();
 
   useEffect(() => {
     const fetchBlogDetail = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/blogs/getBlog/${blogId}`);
+        const response = await fetch(
+          `${process.env.REACT_APP_API_BASE_URL}/blogs/getBlog/${blogId}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch blog details");
         }
         const data = await response.json();
-        setBlog(data.blog); // Set blog state based on 'blog' field
+        setBlog(data.blog);
+        setEditedContent(data.blog.content);
+        setEditedTitle(data.blog.title); // Set initial title
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch the blog. Please try again later.");
@@ -32,7 +51,56 @@ const BlogDetail = () => {
     }
   }, [blogId]);
 
-  // Function to calculate time passed
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const body = {
+        title: editedTitle, // Send the edited title
+        content: editedContent, // Send the edited content
+        picture: newPicture ? newPicture : blog.picture, // Use the new picture if provided, else keep the existing one
+      };
+
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/blogs/editBlog/${blogId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update blog post");
+      }
+
+      const updatedBlog = await response.json();
+      setBlog(updatedBlog.updatedBlog); // Update state with the updated blog
+      setIsEditing(false);
+
+      notyf.success("Blog post updated successfully!");
+    } catch (err) {
+      notyf.error(err.message || "An error occurred while saving the blog.");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditedTitle(blog.title); // Reset to original title
+    setEditedContent(blog.content); // Reset to original content
+  };
+
+  const handlePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewPicture(file); // Set the new picture if a file is selected
+    }
+  };
+
   const timePassed = (date) => {
     const now = new Date();
     const postedDate = new Date(date);
@@ -59,45 +127,93 @@ const BlogDetail = () => {
     <div className="blog-detail-container">
       {blog ? (
         <div className="blog-detail-card">
-          {/* Author Details Section */}
           <div className="author-details">
-            {/* Author profile picture or placeholder */}
-            <img 
-              src={blog.author.profilePicture ? 
-                `${process.env.REACT_APP_API_BASE_URL}/uploads/${blog.author.profilePicture}` :
-                placeholderProfilePicture} 
-              alt={blog.author.userName} 
-              className="author-profile-pic" 
+            <img
+              src={blog.author.profilePicture
+                ? `${process.env.REACT_APP_API_BASE_URL}/uploads/${blog.author.profilePicture}`
+                : placeholderProfilePicture}
+              alt={blog.author.userName}
+              className="author-profile-pic"
             />
-            
-            {/* Author's username and creation date */}
             <div className="author-info">
               <span className="author-name">{blog.author.userName}</span>
-              <span 
-                className="creation-date" 
+              <span
+                className="creation-date"
                 title={`Posted on: ${new Date(blog.creationDate).toLocaleString()}`}
               >
                 {timePassed(blog.creationDate)}
               </span>
             </div>
+
+            {/* Three dots icon with options */}
+            {isAuthenticated && user && blog.author.userId === user._id && (
+              <div className="edit-options">
+                <button
+                  className="three-dots"
+                  onClick={() => setShowOptions(!showOptions)} // Toggle dropdown menu
+                >
+                  &#x2022;&#x2022;&#x2022; {/* This is the Unicode for three dots */}
+                </button>
+                {showOptions && (
+                  <div className="edit-dropdown">
+                    <button
+                      onClick={() => {
+                        setIsEditing(true);
+                        setShowOptions(false); // Close dropdown and start editing
+                      }}
+                    >
+                      Edit Post
+                    </button>
+                    <button onClick={() => console.log("Delete Post Clicked")}>Delete Post</button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
-          <h1 className="blog-title">{blog.title}</h1>
-
-          {/* Display the blog image if available */}
-          {blog.picture ? (
-            <img 
-              src={`${process.env.REACT_APP_API_BASE_URL}/uploads/${blog.picture}`} 
-              alt={blog.title} 
-              className="blog-image"
-            />
+          {isEditing ? (
+            <div>
+              <input
+                type="text"
+                value={editedTitle}
+                onChange={(e) => setEditedTitle(e.target.value)}
+                className="blog-edit-title"
+              />
+              <textarea
+                value={editedContent}
+                onChange={(e) => setEditedContent(e.target.value)}
+                className="blog-edit-textarea"
+              />
+              <div>
+                <label htmlFor="file-input">Change Picture</label>
+                <input
+                  type="file"
+                  id="file-input"
+                  onChange={handlePictureChange}
+                />
+              </div>
+              <div>
+                {/* Cancel and Save buttons */}
+                <button onClick={handleCancelEdit}>Cancel</button>
+                <button onClick={handleSave}>Save</button>
+              </div>
+            </div>
           ) : (
-            <div className="no-image">No image available</div>
+            <div>
+              <h1 className="blog-title">{blog.title}</h1>
+              {blog.picture ? (
+                <img
+                  src={`${process.env.REACT_APP_API_BASE_URL}/uploads/${blog.picture}`}
+                  alt={blog.title}
+                  className="blog-image"
+                />
+              ) : (
+                <div className="no-image">No image available</div>
+              )}
+              <p className="blog-content">{blog.content}</p>
+            </div>
           )}
 
-          <p className="blog-content">{blog.content}</p>
-
-          {/* Comments Section */}
           <div className="comments-section">
             <h4>Comments:</h4>
             {blog.comments && blog.comments.length > 0 ? (

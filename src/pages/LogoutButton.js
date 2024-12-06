@@ -19,7 +19,6 @@ export default function LogoutButton () {
   return (
     <button className="logout-button" onClick={handleLogout}>
       <BiLogOut className="logout-icon" />
-      Logout
     </button>
   );
 };
