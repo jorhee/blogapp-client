@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "../css/BlogDetail.css";
 import placeholderProfilePicture from "../components/images/placeholder-profilePicture.png";
 import { AuthContext } from "../context/AuthContext"; // Import AuthContext for authentication
@@ -8,7 +8,7 @@ import { Notyf } from "notyf"; // Import Notyf
 // Create Notyf instance
 const notyf = new Notyf({
   duration: 3000,
-  position: { x: 'center', y: 'center' },
+  position: { x: "right", y: "top" },
 });
 
 const BlogDetail = () => {
@@ -20,9 +20,10 @@ const BlogDetail = () => {
   const [editedTitle, setEditedTitle] = useState("");
   const [newPicture, setNewPicture] = useState(null);
   const [showOptions, setShowOptions] = useState(false); // For handling the three dots dropdown
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false); // For delete confirmation modal
 
   const { user, isAuthenticated } = useContext(AuthContext); // Access auth state and user
-
+  const navigate = useNavigate(); // For navigation after deletion
 
   const { blogId } = useParams();
 
@@ -101,6 +102,41 @@ const BlogDetail = () => {
     }
   };
 
+  const handleShowConfirmationModal = () => {
+    setShowConfirmationModal(true);
+  };
+
+  const handleCloseConfirmationModal = () => {
+    setShowConfirmationModal(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/blogs/deleteBlog/${blogId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete blog post");
+      }
+
+      notyf.success("Blog post deleted successfully!");
+      navigate("/blogs"); // Redirect to homepage or a different route
+    } catch (err) {
+      notyf.error(err.message || "An error occurred while deleting the blog.");
+    } finally {
+      setShowConfirmationModal(false);
+    }
+  };
+
   const timePassed = (date) => {
     const now = new Date();
     const postedDate = new Date(date);
@@ -164,7 +200,7 @@ const BlogDetail = () => {
                     >
                       Edit Post
                     </button>
-                    <button onClick={() => console.log("Delete Post Clicked")}>Delete Post</button>
+                    <button onClick={handleShowConfirmationModal}>Delete Post</button>
                   </div>
                 )}
               </div>
@@ -230,6 +266,23 @@ const BlogDetail = () => {
         </div>
       ) : (
         <p>No blog found</p>
+      )}
+
+      {/* Confirmation Modal */}
+      {showConfirmationModal && (
+        <div className="confirmation-modal">
+          <div className="modal-content">
+            <h3>Are you sure you want to delete this post?</h3>
+            <div className="modal-actions">
+              <button onClick={handleConfirmDelete} className="confirm-btn">
+                Yes, Delete
+              </button>
+              <button onClick={handleCloseConfirmationModal} className="cancel-btn">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
