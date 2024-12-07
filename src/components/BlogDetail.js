@@ -224,7 +224,7 @@ const BlogDetail = () => {
             </div>
 
             {/* Three dots icon with options */}
-            {isAuthenticated && user && user.isAdmin && (
+            {isAuthenticated && user && ( user.isAdmin || blog.author.userId === user._id ) && (
               <div className="edit-options">
                 <button
                   className="three-dots"
