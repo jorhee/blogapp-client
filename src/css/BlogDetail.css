@@ -425,3 +425,105 @@
   cursor: not-allowed;
   opacity: 0.6;
 }
+
+
+/* Styling for the reply button */
+.reply-button {
+  font-size: 12px;
+  padding: 5px 10px;
+  margin: 5px;
+  border-radius: 4px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  display: block;
+  text-align: left;
+}
+
+.reply-button:hover {
+  background-color: #e1e1e1;
+}
+
+/* Styling for the reply input section */
+.reply-input {
+  display: flex;
+  align-items: center; /* Center vertically */
+  margin-top: 10px;
+  gap: 10px; /* Space between the textarea and button */
+}
+
+.reply-input textarea {
+  width: 90%;
+  height: 50px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  resize: none;
+  flex-grow: 1; /* Allow textarea to grow */
+}
+
+/* Styling for the send reply button */
+.send-reply-button {
+  padding: 10px 15px;
+  background-color: transparent;
+  border: none;
+  border-radius: 4px;
+  color: gray;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center; /* Center the button content */
+  justify-content: center; /* Center the button content */
+}
+
+.send-reply-button.active {
+  background-color: #87ceeb;
+  cursor: pointer;
+}
+
+.send-reply-button.active:hover {
+  background-color: #6dbce0;
+}
+
+/* Styling for the login-to-reply button */
+.login-to-reply button {
+  padding: 5px 10px;
+  font-size: 12px;
+  background-color: #87ceeb;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.login-to-reply button:hover {
+  background-color: #6dbce0;
+}
+
+/* Styling for the add comment text area */
+.add-comment textarea {
+  width: 90%;
+  height: 60px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  resize: none;
+}
+
+.send-button {
+  margin-top: 5px;
+  padding: 6px 12px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.send-button.active {
+  background-color: #87ceeb;
+  cursor: pointer;
+}
+
+.send-button.active:hover {
+  background-color: #6dbce0;
+}

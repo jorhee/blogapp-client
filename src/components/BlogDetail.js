@@ -344,9 +344,9 @@ const handleReplyComment = async (commentId) => {
                   <p>{comment.text}</p>
 
                   {/* Display replies */}
-                  {comment.replies && comment.replies.length > 0 ? (
+                  {comment.replies && comment.replies.length > 0 && (
                     <div className="replies">
-                      <h5>Replies:</h5>
+                      <h5>Replies</h5>
                       {comment.replies.map((reply, index) => (
                         <div key={`${comment._id}-reply-${index}`} className="reply-card">
                           <strong>{reply.userName}</strong>
@@ -354,34 +354,50 @@ const handleReplyComment = async (commentId) => {
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <div className="no-replies">
-                      <button 
-                        onClick={() => setActiveReply({ ...activeReply, commentId: comment._id })}
-                        className="reply-button"
-                      >
-                        Reply
-                      </button>
-                    </div>
                   )}
 
-                  {/* Show reply input if the button is clicked */}
-                  {activeReply.commentId === comment._id && (
-                    <div className="reply-input">
-                      <textarea
-                        value={activeReply.replyText}
-                        onChange={(e) => setActiveReply({ ...activeReply, replyText: e.target.value })}
-                        placeholder="Add a reply..."
-                      />
-                      <button
-                        className={`send-reply-button ${activeReply.replyText.trim() ? 'active' : ''}`}
-                        onClick={() => handleReplyComment(comment._id)}
-                        disabled={!activeReply.replyText.trim()}
-                      >
-                        ➤
-                      </button>
-                    </div>
-                  )}
+                  {/* Reply button and input */}
+                  <div className="reply-section">
+                    {isAuthenticated ? (
+                      <>
+                        <button
+                          className="reply-button"
+                          onClick={() =>
+                            setActiveReply({
+                              commentId: activeReply.commentId === comment._id ? null : comment._id,
+                              replyText: "",
+                            })
+                          }
+                        >
+                          Reply
+                        </button>
+                        {activeReply.commentId === comment._id && (
+                          <div className="reply-input">
+                            <textarea
+                              value={activeReply.replyText}
+                              onChange={(e) =>
+                                setActiveReply({ ...activeReply, replyText: e.target.value })
+                              }
+                              placeholder="Add a reply..."
+                            />
+                            <button
+                              className={`send-reply-button ${
+                                activeReply.replyText.trim() ? "active" : ""
+                              }`}
+                              onClick={() => handleReplyComment(comment._id)}
+                              disabled={!activeReply.replyText.trim()}
+                            >
+                              ➤
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="login-to-reply">
+                        <button onClick={() => navigate("/login")}>Login to reply</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))
             ) : (
