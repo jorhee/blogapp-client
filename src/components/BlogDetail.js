@@ -317,14 +317,24 @@ const BlogDetail = () => {
             ) : (
               <p>No comments yet</p>
             )}
-            {isAuthenticated && (
+            {isAuthenticated ? (
               <div className="add-comment">
                 <textarea
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Add a comment..."
                 />
-                <button onClick={handleAddComment}>Post Comment</button>
+                <button 
+                  className={`send-button ${newComment.trim() ? 'active' : ''}`} 
+                  onClick={handleAddComment} 
+                  disabled={!newComment.trim()} 
+                  title="Send">
+                  ➤
+                </button>
+              </div>
+            ) : (
+              <div className="login-prompt">
+                <button onClick={() => navigate('/login')}>Login to add a comment</button>
               </div>
             )}
           </div>
