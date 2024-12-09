@@ -26,6 +26,8 @@ const BlogDetail = () => {
 
   const { user, isAuthenticated } = useContext(AuthContext); // Access auth state and user
   const navigate = useNavigate(); // For navigation after deletion
+  const [activeReply, setActiveReply] = useState({ commentId: null, replyText: "" });
+
 
   const { blogId } = useParams();
 
@@ -201,6 +203,47 @@ const BlogDetail = () => {
     return <div className="error">{error}</div>;
   }
 
+
+const handleReplyComment = async (commentId) => {
+  const { replyText } = activeReply;
+  
+  if (!replyText.trim()) {
+    notyf.error("Reply cannot be empty.");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `${process.env.REACT_APP_API_BASE_URL}/blogs/replyComments/${blogId}/${commentId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text: replyText }), // Send the reply text
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to add reply");
+    }
+
+    // Update the blog with the new reply
+    setBlog(data.blog);
+    setActiveReply({ commentId: null, replyText: "" });
+    notyf.success("Reply added successfully!");
+  } catch (err) {
+    console.error("Error in handleReplyComment:", err);
+    notyf.error(err.message || "An error occurred while adding the reply.");
+  }
+};
+
+
+
   return (
     <div className="blog-detail-container">
       {blog ? (
@@ -301,7 +344,7 @@ const BlogDetail = () => {
                   <p>{comment.text}</p>
 
                   {/* Display replies */}
-                  {comment.replies && comment.replies.length > 0 && (
+                  {comment.replies && comment.replies.length > 0 ? (
                     <div className="replies">
                       <h5>Replies:</h5>
                       {comment.replies.map((reply, index) => (
@@ -310,6 +353,33 @@ const BlogDetail = () => {
                           <p>{reply.text}</p>
                         </div>
                       ))}
+                    </div>
+                  ) : (
+                    <div className="no-replies">
+                      <button 
+                        onClick={() => setActiveReply({ ...activeReply, commentId: comment._id })}
+                        className="reply-button"
+                      >
+                        Reply
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Show reply input if the button is clicked */}
+                  {activeReply.commentId === comment._id && (
+                    <div className="reply-input">
+                      <textarea
+                        value={activeReply.replyText}
+                        onChange={(e) => setActiveReply({ ...activeReply, replyText: e.target.value })}
+                        placeholder="Add a reply..."
+                      />
+                      <button
+                        className={`send-reply-button ${activeReply.replyText.trim() ? 'active' : ''}`}
+                        onClick={() => handleReplyComment(comment._id)}
+                        disabled={!activeReply.replyText.trim()}
+                      >
+                        ➤
+                      </button>
                     </div>
                   )}
                 </div>

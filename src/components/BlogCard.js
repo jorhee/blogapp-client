@@ -8,7 +8,9 @@ const BlogCard = ({ blog }) => {
   const imageUrl = `${process.env.REACT_APP_API_BASE_URL}/${blog.picture}`;
 
   // Get the first comment (if any)
-  const firstComment = blog.comments && blog.comments.length > 0 ? blog.comments[0].content : "No comments yet.";
+  const firstComment = blog.comments?.length > 0 
+    ? blog.comments[0]?.text || "No comments yet." 
+    : "No comments yet.";
 
   return (
     <Card className="anime-blog-card">
