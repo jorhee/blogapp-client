@@ -31,23 +31,32 @@ export default function AddBlogPage() {
     setLoading(true);
     setError('');
 
-    const payload = {
-      title: title.trim(),
-      content: content.trim(),
-      picture: picture || null, // Handle file upload separately if required
-    };
+
 
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Authentication token not found.');
 
+      // Prepare FormData for file upload
+      const formData = new FormData();
+      formData.append('title', title.trim());
+      formData.append('content', content.trim());
+      if (picture) {
+        formData.append('picture', picture); // Add the picture file if provided
+      }
+
+      // Debug: Log the FormData content
+      console.log('FormData content:');
+      for (const [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/blogs/addBlog`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: formData, // Use FormData instead of JSON.stringify
       });
 
       const result = await response.json();

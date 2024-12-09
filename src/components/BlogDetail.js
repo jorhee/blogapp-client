@@ -281,7 +281,7 @@ const BlogDetail = () => {
               <h1 className="blog-title">{blog.title}</h1>
               {blog.picture ? (
                 <img
-                  src={`${process.env.REACT_APP_API_BASE_URL}/uploads/${blog.picture}`}
+                  src={`${process.env.REACT_APP_API_BASE_URL}/${blog.picture}`}
                   alt={blog.title}
                   className="blog-image"
                 />

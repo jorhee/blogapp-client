@@ -3,7 +3,6 @@ import { Row, Col, Spinner } from "react-bootstrap";
 import BlogCard from "./BlogCard"; // Import BlogCard to display each blog
 import "../css/BlogSection.css";
 
-
 const BlogSection = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true); // Track loading state
@@ -49,13 +48,15 @@ const BlogSection = () => {
   return (
     <div className="blog-section">
       <h2>Featured Anime Blogs</h2>
-      <Row>
-        {blogs.map((blog) => (
-          <Col key={blog._id} sm={12} md={6} lg={4}>
-            <BlogCard blog={blog} />
-          </Col>
-        ))}
-      </Row>
+      <div className="blog-container">
+        <Row>
+          {blogs.map((blog) => (
+            <Col key={blog._id} sm={12} md={12} lg={12}>
+              <BlogCard blog={blog} />
+            </Col>
+          ))}
+        </Row>
+      </div>
     </div>
   );
 };

@@ -5,35 +5,37 @@ import "../css/BlogCard.css"; // Import custom CSS for styling
 
 const BlogCard = ({ blog }) => {
   // Check if a picture exists, if not, use a placeholder image
-  const imageUrl = blog.picture 
-    ? `/uploads/${blog.picture}` 
-    : "/images/default-placeholder.jpg";  // Fallback to a default image or text
+  const imageUrl = `${process.env.REACT_APP_API_BASE_URL}/${blog.picture}`;
+
+  // Get the first comment (if any)
+  const firstComment = blog.comments && blog.comments.length > 0 ? blog.comments[0].content : "No comments yet.";
 
   return (
-    <Card className="anime-blog-card" style={{ width: "100%" }}>
-      {/* Image Styling with fallback */}
+    <Card className="anime-blog-card">
       <Card.Img
         variant="top"
         src={imageUrl}
         className="blog-card-image"
         alt={blog.picture ? blog.title : "No image available"}
       />
-      <Card.Body>
-        <div className="blog-card-header">
-          {/* Title */}
-          <Card.Title className="blog-card-title">{blog.title}</Card.Title>
-        </div>
+      <div className="blog-card-content-wrapper">
+        <Card.Title className="blog-card-title">{blog.title}</Card.Title>
         <Card.Text className="blog-card-content">
-          {/* Preview Content */}
           {blog.content.slice(0, 100)}...
         </Card.Text>
+        
+        {/* Display the first comment */}
+        <div className="blog-card-comment">
+          <strong>Comments: </strong>{firstComment}
+        </div>
+
         <div className="blog-card-footer">
           {/* Link to blog detail page */}
           <Link to={`/blogs/getBlog/${blog._id}`} className="read-more-btn">
             Read More
           </Link>
         </div>
-      </Card.Body>
+      </div>
     </Card>
   );
 };
