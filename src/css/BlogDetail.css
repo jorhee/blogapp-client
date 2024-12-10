@@ -430,11 +430,12 @@
 /* Styling for the reply button */
 .reply-button {
   font-size: 12px;
+  font-weight: bold;
   padding: 5px 10px;
   margin: 5px;
   border-radius: 4px;
-  background-color: #f1f1f1;
-  border: 1px solid #ccc;
+  background-color: transparent;
+  border: none;
   cursor: pointer;
   display: block;
   text-align: left;
@@ -526,4 +527,31 @@
 
 .send-button.active:hover {
   background-color: #6dbce0;
+}
+
+
+/* Styling for like button */
+.like-section {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.like-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.like-button:hover {
+  background-color: #0056b3;
+}
+
+.like-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

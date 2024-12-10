@@ -27,9 +27,11 @@ const BlogDetail = () => {
   const { user, isAuthenticated } = useContext(AuthContext); // Access auth state and user
   const navigate = useNavigate(); // For navigation after deletion
   const [activeReply, setActiveReply] = useState({ commentId: null, replyText: "" });
-
+  const [likes, setLikes] = useState([]); // Track the array of user IDs who liked the post
+  const [isLiked, setIsLiked] = useState(false); // Track if the current user has liked the post
 
   const { blogId } = useParams();
+
 
   useEffect(() => {
     const fetchBlogDetail = async () => {
@@ -207,6 +209,7 @@ const BlogDetail = () => {
 const handleReplyComment = async (commentId) => {
   const { replyText } = activeReply;
   
+
   if (!replyText.trim()) {
     notyf.error("Reply cannot be empty.");
     return;
@@ -241,6 +244,39 @@ const handleReplyComment = async (commentId) => {
     notyf.error(err.message || "An error occurred while adding the reply.");
   }
 };
+
+
+// Handle like button click
+const handleLike = async () => {
+  if (!isAuthenticated) {
+    notyf.error("You must be logged in to like a post.");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `${process.env.REACT_APP_API_BASE_URL}/blogs/likeBlog/${blogId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to like the post");
+    }
+    const data = await response.json();
+    setLikes(data.updatedBlog.likes); // Update the likes array
+    setIsLiked(true); // Update to true since the user liked the post
+    notyf.success("You liked this post!");
+  } catch (err) {
+    notyf.error(err.message || "An error occurred while liking the blog.");
+  }
+};
+
 
 
 
@@ -332,6 +368,18 @@ const handleReplyComment = async (commentId) => {
                 <div className="no-image">No image available</div>
               )}
               <p className="blog-content">{blog.content}</p>
+              {/* Like Button */}
+              <div className="like-section">
+                <button
+                  className={`like-button ${isLiked ? "liked" : ""}`}
+                  onClick={handleLike}
+                  disabled={isLiked} // Disable button if already liked
+                >
+                  👍 Like {blog.likes.length} {/* Display the number of likes */}
+                </button>
+                {isLiked && <div>You liked this post!</div>} {/* Display confirmation */}
+              </div>
+
             </div>
           )}
 
@@ -378,7 +426,7 @@ const handleReplyComment = async (commentId) => {
                               onChange={(e) =>
                                 setActiveReply({ ...activeReply, replyText: e.target.value })
                               }
-                              placeholder="Add a reply..."
+                              placeholder={`Reply as ${user.userName}`}
                             />
                             <button
                               className={`send-reply-button ${
@@ -403,12 +451,12 @@ const handleReplyComment = async (commentId) => {
             ) : (
               <p>No comments yet</p>
             )}
-            {isAuthenticated ? (
+            {user ? (
               <div className="add-comment">
                 <textarea
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Add a comment..."
+                  placeholder={`Comment as ${user.userName}`}
                 />
                 <button 
                   className={`send-button ${newComment.trim() ? 'active' : ''}`} 
